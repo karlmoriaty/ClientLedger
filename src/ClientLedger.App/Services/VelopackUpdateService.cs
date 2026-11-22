@@ -67,7 +67,7 @@ public sealed class VelopackUpdateService : IUpdateService
         catch (Exception ex)
         {
             _log.Error("检查更新失败。", ex);
-            Set(UpdateState.Failed, $"检查更新失败：{ex.Message}");
+            Set(UpdateState.Failed, DescribeFailure(ex, "检查更新失败"));
         }
     }
 
@@ -98,7 +98,7 @@ public sealed class VelopackUpdateService : IUpdateService
         catch (Exception ex)
         {
             _log.Error("下载更新失败。", ex);
-            Set(UpdateState.Failed, $"下载更新失败：{ex.Message}");
+            Set(UpdateState.Failed, DescribeFailure(ex, "下载更新失败"));
         }
     }
 
@@ -118,6 +118,28 @@ public sealed class VelopackUpdateService : IUpdateService
             _log.Error("应用更新失败。", ex);
             Set(UpdateState.Failed, "应用更新失败，请到 Releases 页面手动下载。");
         }
+    }
+
+    /// <summary>
+    /// 把底层异常翻译成用户能理解的提示。GitHub 未认证 API 有速率限制（60 次/小时/IP），
+    /// 直接把 403 原文抛给用户既看不懂也会引发恐慌，详细原因只写日志。
+    /// </summary>
+    private static string DescribeFailure(Exception ex, string prefix)
+    {
+        var message = ex.Message;
+
+        if (message.Contains("403", StringComparison.Ordinal)
+            || message.Contains("rate limit", StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{prefix}：GitHub 接口访问受限，请稍后重试，或到 Releases 页面手动下载。";
+        }
+
+        if (message.Contains("404", StringComparison.Ordinal))
+        {
+            return $"{prefix}：更新源暂不可用，请稍后重试。";
+        }
+
+        return $"{prefix}，请检查网络后重试，或到 Releases 页面手动下载。";
     }
 
     private void Set(UpdateState state, string text, int progress = 0, string? version = null)
