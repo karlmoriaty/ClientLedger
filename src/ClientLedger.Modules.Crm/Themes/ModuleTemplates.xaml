@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:viewModels="clr-namespace:ClientLedger.Modules.Crm.ViewModels"
+                    xmlns:views="clr-namespace:ClientLedger.Modules.Crm.Views">
+
+    <DataTemplate DataType="{x:Type viewModels:DashboardViewModel}">
+        <views:DashboardView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:CustomersViewModel}">
+        <views:CustomersView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:ContactsViewModel}">
+        <views:ContactsView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:ActivitiesViewModel}">
+        <views:ActivitiesView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:ScheduleViewModel}">
+        <views:ScheduleView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:QuotesViewModel}">
+        <views:QuotesView />
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type viewModels:ReportsViewModel}">
+        <views:ReportsView />
+    </DataTemplate>
+
+</ResourceDictionary>

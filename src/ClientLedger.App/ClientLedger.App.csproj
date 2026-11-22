@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>ClientLedger.App</RootNamespace>
+    <AssemblyName>ClientLedger</AssemblyName>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClientLedger.Foundation\ClientLedger.Foundation.csproj" />
+    <ProjectReference Include="..\ClientLedger.Data\ClientLedger.Data.csproj" />
+    <ProjectReference Include="..\ClientLedger.Security\ClientLedger.Security.csproj" />
+    <ProjectReference Include="..\ClientLedger.Licensing\ClientLedger.Licensing.csproj" />
+    <ProjectReference Include="..\ClientLedger.Shell\ClientLedger.Shell.csproj" />
+    <ProjectReference Include="..\ClientLedger.Modules.Crm.Contracts\ClientLedger.Modules.Crm.Contracts.csproj" />
+    <ProjectReference Include="..\ClientLedger.Modules.Crm\ClientLedger.Modules.Crm.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,263 @@
+<UserControl x:Class="ClientLedger.Modules.Crm.Views.ContactsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ClientLedger.Shell.Converters;assembly=ClientLedger.Shell"
+             xmlns:shell="clr-namespace:ClientLedger.Shell;assembly=ClientLedger.Shell">
+
+    <UserControl.Resources>
+        <converters:BoolVisibilityConverter x:Key="BoolVis" />
+        <converters:AllTrueToVisibilityConverter x:Key="AllTrue" />
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+        <converters:EmptyTextVisibilityConverter x:Key="EmptyText" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="384" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="24,18,20,18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox Width="300"
+                         shell:TextBoxAssist.Placeholder="搜索姓名、电话或客户"
+                         Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Column="1"
+                        Command="{Binding NewContactCommand}"
+                        Content="新建联系人"
+                        IsEnabled="{Binding CanWrite}"
+                        Style="{StaticResource PrimaryButton}" />
+            </Grid>
+
+            <TextBlock Grid.Row="1"
+                       Margin="0,10,0,0"
+                       FontSize="12"
+                       Foreground="{StaticResource Ink2}"
+                       Text="{Binding NoticeText}"
+                       Visibility="{Binding NoticeText, Converter={StaticResource EmptyText}, ConverterParameter=invert}" />
+
+            <Border Grid.Row="2" Margin="0,10,0,0" Padding="0" Style="{StaticResource Card}">
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Width="*" Header="姓名">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock FontSize="12.5" FontWeight="SemiBold" Text="{Binding Name}" />
+                                        <Border Margin="6,0,0,0"
+                                                Padding="5,1"
+                                                Background="{StaticResource AccentSoft}"
+                                                Visibility="{Binding IsPrimary, Converter={StaticResource BoolVis}}">
+                                            <TextBlock FontSize="9.5"
+                                                       Foreground="{StaticResource Accent}"
+                                                       Text="主" />
+                                        </Border>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Width="150" Binding="{Binding CustomerName}" Header="客户" />
+                        <DataGridTextColumn Width="110" Binding="{Binding Title}" Header="职务" />
+                        <DataGridTextColumn Width="130" Binding="{Binding Phone}" Header="电话" />
+                        <DataGridTextColumn Width="120" Binding="{Binding WeChat}" Header="微信" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Column="1"
+                Background="{StaticResource Paper1}"
+                BorderBrush="{StaticResource Line}"
+                BorderThickness="1,0,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="18,16,14,10">
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource SectionTitle}"
+                               Text="联系人详情"
+                               Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}, ConverterParameter=invert}" />
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource SectionTitle}"
+                               Text="{Binding Editor.Heading}"
+                               Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}}" />
+
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Width="30"
+                                Height="30"
+                                Command="{Binding EditContactCommand}"
+                                Style="{StaticResource IconButton}"
+                                Tag="{StaticResource Icon.Edit}"
+                                ToolTip="编辑">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource AllTrue}">
+                                    <Binding Path="HasSelection" />
+                                    <Binding Converter="{StaticResource InverseBool}" Path="IsEditing" />
+                                </MultiBinding>
+                            </Button.Visibility>
+                        </Button>
+                        <Button Width="30"
+                                Height="30"
+                                Margin="2,0,0,0"
+                                Command="{Binding DeleteCommand}"
+                                Foreground="{StaticResource Danger}"
+                                Style="{StaticResource IconButton}"
+                                Tag="{StaticResource Icon.Trash}"
+                                ToolTip="删除">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource AllTrue}">
+                                    <Binding Path="HasSelection" />
+                                    <Binding Converter="{StaticResource InverseBool}" Path="IsEditing" />
+                                </MultiBinding>
+                            </Button.Visibility>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="18,0,18,20" Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}}">
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="姓名 *" />
+                        <TextBox Text="{Binding Editor.Name, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="所属客户 *" />
+                        <ComboBox DisplayMemberPath="Name"
+                                  ItemsSource="{Binding Customers}"
+                                  SelectedValue="{Binding Editor.CustomerId}"
+                                  SelectedValuePath="Id" />
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="职务" />
+                        <TextBox shell:TextBoxAssist.Placeholder="采购经理 / 设计总监"
+                                 Text="{Binding Editor.Title, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="电话" />
+                                <TextBox Text="{Binding Editor.Phone, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="微信" />
+                                <TextBox Text="{Binding Editor.WeChat, UpdateSourceTrigger=PropertyChanged}" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="邮箱" />
+                        <TextBox Text="{Binding Editor.Email, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <CheckBox Margin="0,14,0,0"
+                                  Content="设为主联系人"
+                                  IsChecked="{Binding Editor.IsPrimary}" />
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="备注" />
+                        <TextBox MinHeight="70"
+                                 Padding="10,8"
+                                 AcceptsReturn="True"
+                                 Text="{Binding Editor.Note, UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap"
+                                 VerticalContentAlignment="Top" />
+
+                        <StackPanel Margin="0,16,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <Button MinWidth="76" Command="{Binding CancelEditCommand}" Content="取消" Style="{StaticResource SecondaryButton}" />
+                            <Button MinWidth="86"
+                                    Margin="8,0,0,0"
+                                    Command="{Binding SaveCommand}"
+                                    Content="保存"
+                                    Style="{StaticResource PrimaryButton}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer Grid.Row="1"
+                              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}, ConverterParameter=invert}">
+                    <StackPanel Margin="18,0,18,20">
+                        <TextBlock FontSize="12"
+                                   Foreground="{StaticResource Ink3}"
+                                   Text="从左侧选择一位联系人，或新建联系人。">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasSelection}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource BoolVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="18"
+                                           FontWeight="SemiBold"
+                                           Text="{Binding Selected.Name}" />
+                                <Border Margin="8,0,0,0"
+                                        Padding="6,2"
+                                        VerticalAlignment="Center"
+                                        Background="{StaticResource AccentSoft}"
+                                        Visibility="{Binding Selected.IsPrimary, Converter={StaticResource BoolVis}}">
+                                    <TextBlock FontSize="10"
+                                               Foreground="{StaticResource Accent}"
+                                               Text="主联系人" />
+                                </Border>
+                            </StackPanel>
+
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="78" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Style="{StaticResource Caption}" Text="客户" />
+                                <TextBlock Grid.Column="1" Text="{Binding Selected.CustomerName}" />
+
+                                <TextBlock Grid.Row="1" Style="{StaticResource Caption}" Text="职务" />
+                                <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Selected.Title}" />
+
+                                <TextBlock Grid.Row="2" Style="{StaticResource Caption}" Text="电话" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Selected.Phone}" />
+
+                                <TextBlock Grid.Row="3" Style="{StaticResource Caption}" Text="微信" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Selected.WeChat}" />
+
+                                <TextBlock Grid.Row="4" Style="{StaticResource Caption}" Text="邮箱" />
+                                <TextBlock Grid.Row="4" Grid.Column="1" Text="{Binding Selected.Email}" TextTrimming="CharacterEllipsis" />
+                            </Grid>
+
+                            <TextBlock Margin="0,12,0,0"
+                                       FontSize="12"
+                                       Foreground="{StaticResource Ink2}"
+                                       Text="{Binding Selected.Note}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding Selected.Note, Converter={StaticResource EmptyText}, ConverterParameter=invert}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>

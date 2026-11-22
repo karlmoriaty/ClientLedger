@@ -1,0 +1,56 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        Paper 主题令牌。
+        规则：直角、1px 细线、中性灰阶、单一低饱和强调色；不使用渐变、阴影、圆角与霓虹色。
+        深色令牌先留命名位（Ink/Paper 反转），M1 只替换本文件即可切换。
+    -->
+
+    <FontFamily x:Key="UiFont">Segoe UI Variable Text, Microsoft YaHei UI, Segoe UI</FontFamily>
+    <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas, Courier New</FontFamily>
+
+    <!-- 表面 -->
+    <SolidColorBrush x:Key="Paper0" Color="#FFFFFFFF" />
+    <SolidColorBrush x:Key="Paper1" Color="#FFF7F8FA" />
+    <SolidColorBrush x:Key="Paper2" Color="#FFF0F2F5" />
+    <SolidColorBrush x:Key="Paper3" Color="#FFE6E9ED" />
+    <SolidColorBrush x:Key="PaperInset" Color="#FFFAFBFC" />
+
+    <!-- 描边 -->
+    <SolidColorBrush x:Key="Line" Color="#FFE4E7EB" />
+    <SolidColorBrush x:Key="LineStrong" Color="#FFD2D7DE" />
+    <SolidColorBrush x:Key="LineInset" Color="#FFEDEFF2" />
+
+    <!-- 文字 -->
+    <SolidColorBrush x:Key="Ink0" Color="#FF14171A" />
+    <SolidColorBrush x:Key="Ink1" Color="#FF4B5563" />
+    <SolidColorBrush x:Key="Ink2" Color="#FF8A93A0" />
+    <SolidColorBrush x:Key="Ink3" Color="#FFAEB6C1" />
+    <SolidColorBrush x:Key="InkOnAccent" Color="#FFFFFFFF" />
+
+    <!-- 强调（深墨蓝） -->
+    <SolidColorBrush x:Key="Accent" Color="#FF1F3A5F" />
+    <SolidColorBrush x:Key="AccentHover" Color="#FF2A4C77" />
+    <SolidColorBrush x:Key="AccentPressed" Color="#FF172C49" />
+    <SolidColorBrush x:Key="AccentSoft" Color="#FFEDF2F8" />
+    <SolidColorBrush x:Key="AccentLine" Color="#FFC7D5E5" />
+
+    <!-- 语义色（低饱和，不使用纯红绿） -->
+    <SolidColorBrush x:Key="Success" Color="#FF2C6B4F" />
+    <SolidColorBrush x:Key="SuccessSoft" Color="#FFEAF3EE" />
+    <SolidColorBrush x:Key="Warning" Color="#FF8A5A18" />
+    <SolidColorBrush x:Key="WarningSoft" Color="#FFFBF2E3" />
+    <SolidColorBrush x:Key="Danger" Color="#FF9A3B33" />
+    <SolidColorBrush x:Key="DangerSoft" Color="#FFF9ECEA" />
+    <SolidColorBrush x:Key="NeutralSoft" Color="#FFF1F3F5" />
+
+    <!-- 阴影只用于弹层，且极轻 -->
+    <DropShadowEffect x:Key="PopupShadow"
+                      BlurRadius="18"
+                      Direction="270"
+                      Opacity="0.14"
+                      ShadowDepth="4"
+                      Color="#FF1A1D21" />
+
+</ResourceDictionary>

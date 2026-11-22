@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>ClientLedger.Shell</RootNamespace>
+    <AssemblyName>ClientLedger.Shell</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClientLedger.Foundation\ClientLedger.Foundation.csproj" />
+    <ProjectReference Include="..\ClientLedger.Data\ClientLedger.Data.csproj" />
+    <ProjectReference Include="..\ClientLedger.Security\ClientLedger.Security.csproj" />
+    <ProjectReference Include="..\ClientLedger.Licensing\ClientLedger.Licensing.csproj" />
+  </ItemGroup>
+
+</Project>

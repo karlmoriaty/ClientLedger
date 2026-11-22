@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ClientLedger.App/ClientLedger.App.csproj" />
+    <Project Path="src/ClientLedger.Data/ClientLedger.Data.csproj" />
+    <Project Path="src/ClientLedger.Foundation/ClientLedger.Foundation.csproj" />
+    <Project Path="src/ClientLedger.Licensing/ClientLedger.Licensing.csproj" />
+    <Project Path="src/ClientLedger.Modules.Crm.Contracts/ClientLedger.Modules.Crm.Contracts.csproj" />
+    <Project Path="src/ClientLedger.Modules.Crm/ClientLedger.Modules.Crm.csproj" />
+    <Project Path="src/ClientLedger.Security/ClientLedger.Security.csproj" />
+    <Project Path="src/ClientLedger.Shell/ClientLedger.Shell.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ClientLedger.Tests/ClientLedger.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/ClientLedger.LicenseForge/ClientLedger.LicenseForge.csproj" />
+  </Folder>
+</Solution>

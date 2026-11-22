@@ -1,0 +1,45 @@
+## Build results
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+publish/
+artifacts/
+
+## Rider / VS / VS Code
+.vs/
+.idea/
+*.user
+*.suo
+*.DotSettings.user
+.vscode/
+
+## NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+## Test
+TestResults/
+coverage*.xml
+coverage*.json
+*.coverage
+
+## Velopack output
+Releases/
+*.vpk
+
+## Signing material — never commit a private key
+*.private.key
+keys/*.key
+keys/*.pem
+
+## Local verification artifacts (screenshots, capture scripts, db snapshots)
+.artifacts/
+
+## OS
+Thumbs.db
+desktop.ini

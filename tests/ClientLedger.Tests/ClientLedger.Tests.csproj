@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ClientLedger.Tests</RootNamespace>
+    <AssemblyName>ClientLedger.Tests</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ClientLedger.Foundation\ClientLedger.Foundation.csproj" />
+    <ProjectReference Include="..\..\src\ClientLedger.Data\ClientLedger.Data.csproj" />
+    <ProjectReference Include="..\..\src\ClientLedger.Security\ClientLedger.Security.csproj" />
+    <ProjectReference Include="..\..\src\ClientLedger.Licensing\ClientLedger.Licensing.csproj" />
+    <ProjectReference Include="..\..\src\ClientLedger.Modules.Crm.Contracts\ClientLedger.Modules.Crm.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\ClientLedger.Modules.Crm\ClientLedger.Modules.Crm.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>ClientLedger.Modules.Crm.Contracts</RootNamespace>
+    <AssemblyName>ClientLedger.Modules.Crm.Contracts</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClientLedger.Foundation\ClientLedger.Foundation.csproj" />
+  </ItemGroup>
+
+</Project>

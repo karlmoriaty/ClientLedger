@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>ClientLedger.Modules.Crm</RootNamespace>
+    <AssemblyName>ClientLedger.Modules.Crm</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ClientLedger.Foundation\ClientLedger.Foundation.csproj" />
+    <ProjectReference Include="..\ClientLedger.Data\ClientLedger.Data.csproj" />
+    <ProjectReference Include="..\ClientLedger.Security\ClientLedger.Security.csproj" />
+    <ProjectReference Include="..\ClientLedger.Shell\ClientLedger.Shell.csproj" />
+    <ProjectReference Include="..\ClientLedger.Modules.Crm.Contracts\ClientLedger.Modules.Crm.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

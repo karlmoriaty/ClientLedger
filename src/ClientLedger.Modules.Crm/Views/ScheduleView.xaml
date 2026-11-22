@@ -1,0 +1,303 @@
+<UserControl x:Class="ClientLedger.Modules.Crm.Views.ScheduleView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:ClientLedger.Shell.Converters;assembly=ClientLedger.Shell"
+             xmlns:crmConverters="clr-namespace:ClientLedger.Modules.Crm.Converters"
+             xmlns:shell="clr-namespace:ClientLedger.Shell;assembly=ClientLedger.Shell">
+
+    <UserControl.Resources>
+        <converters:BoolVisibilityConverter x:Key="BoolVis" />
+        <converters:AllTrueToVisibilityConverter x:Key="AllTrue" />
+        <converters:InverseBoolConverter x:Key="InverseBool" />
+        <converters:EmptyTextVisibilityConverter x:Key="EmptyText" />
+        <converters:TokenBrushConverter x:Key="TokenBrush" />
+        <converters:TokenSoftBrushConverter x:Key="TokenSoft" />
+        <crmConverters:EnumLabelConverter x:Key="EnumLabel" />
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="384" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0" Margin="24,18,20,18">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox Width="128"
+                          DisplayMemberPath="Label"
+                          ItemsSource="{Binding Filters}"
+                          SelectedItem="{Binding SelectedFilter}" />
+                <Button Grid.Column="1"
+                        Command="{Binding NewScheduleCommand}"
+                        Content="新建日程"
+                        IsEnabled="{Binding CanWrite}"
+                        Style="{StaticResource PrimaryButton}" />
+            </Grid>
+
+            <TextBlock Grid.Row="1"
+                       Margin="0,10,0,0"
+                       FontSize="12"
+                       Foreground="{StaticResource Ink2}"
+                       Text="{Binding NoticeText}"
+                       Visibility="{Binding NoticeText, Converter={StaticResource EmptyText}, ConverterParameter=invert}" />
+
+            <Border Grid.Row="2" Margin="0,10,0,0" Padding="0" Style="{StaticResource Card}">
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Width="138" Binding="{Binding StartMoment}" Header="时间" />
+                        <DataGridTextColumn Width="*" Binding="{Binding Title}" Header="标题" />
+                        <DataGridTextColumn Width="140" Binding="{Binding CustomerName}" Header="客户" />
+                        <DataGridTextColumn Width="64" Binding="{Binding KindText}" Header="类型" />
+                        <DataGridTemplateColumn Width="86" Header="状态">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Border HorizontalAlignment="Left"
+                                            Padding="7,2"
+                                            Background="{Binding StateToken, Converter={StaticResource TokenSoft}}">
+                                        <TextBlock FontSize="11"
+                                                   Foreground="{Binding StateToken, Converter={StaticResource TokenBrush}}"
+                                                   Text="{Binding StateText}" />
+                                    </Border>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTemplateColumn Width="56" Header="完成">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Width="24"
+                                            Height="24"
+                                            Command="{Binding DataContext.CompleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Style="{StaticResource IconButton}"
+                                            Tag="{StaticResource Icon.Check}"
+                                            ToolTip="标记完成">
+                                        <Button.Visibility>
+                                            <MultiBinding Converter="{StaticResource AllTrue}">
+                                                <Binding Path="DataContext.CanWrite" RelativeSource="{RelativeSource AncestorType=UserControl}" />
+                                                <Binding Path="State" Converter="{StaticResource StatePending}" />
+                                            </MultiBinding>
+                                        </Button.Visibility>
+                                    </Button>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Column="1"
+                Background="{StaticResource Paper1}"
+                BorderBrush="{StaticResource Line}"
+                BorderThickness="1,0,0,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Margin="18,16,14,10">
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource SectionTitle}"
+                               Text="日程详情"
+                               Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}, ConverterParameter=invert}" />
+                    <TextBlock VerticalAlignment="Center"
+                               Style="{StaticResource SectionTitle}"
+                               Text="{Binding Editor.Heading}"
+                               Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}}" />
+
+                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Width="30"
+                                Height="30"
+                                Command="{Binding EditScheduleCommand}"
+                                Style="{StaticResource IconButton}"
+                                Tag="{StaticResource Icon.Edit}"
+                                ToolTip="编辑">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource AllTrue}">
+                                    <Binding Path="HasSelection" />
+                                    <Binding Converter="{StaticResource InverseBool}" Path="IsEditing" />
+                                </MultiBinding>
+                            </Button.Visibility>
+                        </Button>
+                        <Button Width="30"
+                                Height="30"
+                                Margin="2,0,0,0"
+                                Command="{Binding DeleteCommand}"
+                                Foreground="{StaticResource Danger}"
+                                Style="{StaticResource IconButton}"
+                                Tag="{StaticResource Icon.Trash}"
+                                ToolTip="删除">
+                            <Button.Visibility>
+                                <MultiBinding Converter="{StaticResource AllTrue}">
+                                    <Binding Path="HasSelection" />
+                                    <Binding Converter="{StaticResource InverseBool}" Path="IsEditing" />
+                                </MultiBinding>
+                            </Button.Visibility>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+
+                <ScrollViewer Grid.Row="1" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="18,0,18,20" Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}}">
+
+                        <TextBlock Style="{StaticResource FieldLabel}" Text="标题 *" />
+                        <TextBox shell:TextBoxAssist.Placeholder="拜访锐丰建材 · 确认样品"
+                                 Text="{Binding Editor.Title, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Grid Margin="0,12,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0,0,6,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="类型" />
+                                <ComboBox ItemsSource="{Binding Editor.KindOptions}" SelectedItem="{Binding Editor.Kind}">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding Converter={StaticResource EnumLabel}}" />
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="6,0,0,0">
+                                <TextBlock Style="{StaticResource FieldLabel}" Text="关联客户" />
+                                <ComboBox DisplayMemberPath="Name"
+                                          ItemsSource="{Binding Customers}"
+                                          SelectedValue="{Binding Editor.CustomerId}"
+                                          SelectedValuePath="Id" />
+                            </StackPanel>
+                        </Grid>
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="开始时间 *" />
+                        <TextBox shell:TextBoxAssist.Placeholder="2026-11-24 14:30"
+                                 Text="{Binding Editor.StartText, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="结束时间" />
+                        <TextBox shell:TextBoxAssist.Placeholder="2026-11-24 15:30（可留空）"
+                                 Text="{Binding Editor.EndText, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="提前提醒" />
+                        <ComboBox ItemsSource="{Binding Editor.RemindOptions}" SelectedItem="{Binding Editor.RemindMinutes}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource RemindLabel}}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <TextBlock Margin="0,12,0,0" Style="{StaticResource FieldLabel}" Text="备注" />
+                        <TextBox MinHeight="70"
+                                 Padding="10,8"
+                                 AcceptsReturn="True"
+                                 Text="{Binding Editor.Note, UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap"
+                                 VerticalContentAlignment="Top" />
+
+                        <StackPanel Margin="0,16,0,0" HorizontalAlignment="Right" Orientation="Horizontal">
+                            <Button MinWidth="76" Command="{Binding CancelEditCommand}" Content="取消" Style="{StaticResource SecondaryButton}" />
+                            <Button MinWidth="86"
+                                    Margin="8,0,0,0"
+                                    Command="{Binding SaveCommand}"
+                                    Content="保存"
+                                    Style="{StaticResource PrimaryButton}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <ScrollViewer Grid.Row="1"
+                              HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding IsEditing, Converter={StaticResource BoolVis}, ConverterParameter=invert}">
+                    <StackPanel Margin="18,0,18,20">
+                        <TextBlock FontSize="12"
+                                   Foreground="{StaticResource Ink3}"
+                                   Text="从左侧选择一条日程，或新建日程。">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding HasSelection}" Value="False">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+
+                        <StackPanel Visibility="{Binding HasSelection, Converter={StaticResource BoolVis}}">
+                            <TextBlock FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Text="{Binding Selected.Title}"
+                                       TextWrapping="Wrap" />
+
+                            <StackPanel Margin="0,8,0,0" Orientation="Horizontal">
+                                <Border Padding="7,2" Background="{Binding Selected.StateToken, Converter={StaticResource TokenSoft}}">
+                                    <TextBlock FontSize="11"
+                                               Foreground="{Binding Selected.StateToken, Converter={StaticResource TokenBrush}}"
+                                               Text="{Binding Selected.StateText}" />
+                                </Border>
+                                <TextBlock Margin="8,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource Caption}"
+                                           Text="{Binding Selected.KindText}" />
+                            </StackPanel>
+
+                            <Grid Margin="0,16,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="78" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                    <RowDefinition Height="26" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Style="{StaticResource Caption}" Text="开始" />
+                                <TextBlock Grid.Column="1" Style="{StaticResource Mono}" Text="{Binding Selected.StartMoment}" />
+
+                                <TextBlock Grid.Row="1" Style="{StaticResource Caption}" Text="结束" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="1"
+                                           Style="{StaticResource Mono}"
+                                           Text="{Binding Selected.EndUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}" />
+
+                                <TextBlock Grid.Row="2" Style="{StaticResource Caption}" Text="客户" />
+                                <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Selected.CustomerName}" />
+
+                                <TextBlock Grid.Row="3" Style="{StaticResource Caption}" Text="提醒" />
+                                <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Selected.RemindText}" />
+                            </Grid>
+
+                            <TextBlock Margin="0,12,0,0"
+                                       FontSize="12"
+                                       Foreground="{StaticResource Ink2}"
+                                       Text="{Binding Selected.Note}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding Selected.Note, Converter={StaticResource EmptyText}, ConverterParameter=invert}" />
+
+                            <Button Margin="0,18,0,0"
+                                    HorizontalAlignment="Left"
+                                    Command="{Binding CompleteCommand}"
+                                    CommandParameter="{Binding Selected}"
+                                    Content="标记为已完成"
+                                    IsEnabled="{Binding CanWrite}"
+                                    Style="{StaticResource SecondaryButton}" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl>
