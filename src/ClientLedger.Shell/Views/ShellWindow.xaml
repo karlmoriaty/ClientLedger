@@ -20,6 +20,7 @@
     <controls:ChromeWindow.Resources>
         <converters:TokenBrushConverter x:Key="TokenBrush" />
         <converters:TokenSoftBrushConverter x:Key="TokenSoft" />
+        <converters:BoolVisibilityConverter x:Key="BoolVis" />
     </controls:ChromeWindow.Resources>
 
     <Grid>
@@ -179,6 +180,27 @@
                     <StackPanel Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Orientation="Horizontal">
+
+                        <Button Height="30"
+                                Margin="0,0,8,0"
+                                Padding="10,0"
+                                Command="{Binding OpenSettingsCommand}"
+                                Style="{StaticResource QuietButton}"
+                                ToolTip="有可用更新，点击进入设置"
+                                Visibility="{Binding HasUpdate, Converter={StaticResource BoolVis}}">
+                            <StackPanel Orientation="Horizontal">
+                                <controls:Icon VerticalAlignment="Center"
+                                               Foreground="{StaticResource Accent}"
+                                               Geometry="{StaticResource Icon.Refresh}"
+                                               Size="14"
+                                               StrokeThickness="1.9" />
+                                <TextBlock Margin="7,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="12"
+                                           Foreground="{StaticResource Accent}"
+                                           Text="{Binding UpdateBadgeText}" />
+                            </StackPanel>
+                        </Button>
 
                         <Border Margin="0,0,12,0"
                                 Padding="8,3"

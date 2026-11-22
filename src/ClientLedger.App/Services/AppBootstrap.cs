@@ -69,6 +69,7 @@ public static class AppBootstrap
         services.AddSingleton<DataMaintenanceService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<INavigationRegistry, NavigationRegistry>();
+        services.AddSingleton<IUpdateService, VelopackUpdateService>();
 
         services.AddSingleton<ShellViewModel>();
         services.AddSingleton<ShellWindow>();

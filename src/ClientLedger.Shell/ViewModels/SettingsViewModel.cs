@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using ClientLedger.Data;
 using ClientLedger.Data.Audit;
 using ClientLedger.Foundation.Contracts;
 using ClientLedger.Foundation.Platform;
@@ -32,9 +33,12 @@ public sealed partial class SettingsViewModel : PageViewModel
     private readonly IDialogService _dialogs;
     private readonly AppInfo _appInfo;
     private readonly AppPaths _paths;
+    private readonly IUpdateService _updateService;
+    private readonly ISettingsStore _settings;
     private readonly IAppLog _log;
 
     private bool _suppressRoleChange;
+    private bool _suppressAutoCheckWrite;
 
     public SettingsViewModel(
         IUserContext userContext,
@@ -46,6 +50,8 @@ public sealed partial class SettingsViewModel : PageViewModel
         IDialogService dialogs,
         AppInfo appInfo,
         AppPaths paths,
+        IUpdateService updateService,
+        ISettingsStore settings,
         IAppLog log)
     {
         _userContext = userContext;
@@ -57,7 +63,11 @@ public sealed partial class SettingsViewModel : PageViewModel
         _dialogs = dialogs;
         _appInfo = appInfo;
         _paths = paths;
+        _updateService = updateService;
+        _settings = settings;
         _log = log;
+
+        _updateService.Changed += (_, _) => RefreshUpdateState();
 
         Roles =
         [
@@ -139,6 +149,30 @@ public sealed partial class SettingsViewModel : PageViewModel
 
     [ObservableProperty]
     private bool _canManageLicense;
+
+    [ObservableProperty]
+    private string _updateStatusText = string.Empty;
+
+    [ObservableProperty]
+    private string _availableVersionText = "—";
+
+    [ObservableProperty]
+    private int _updateProgress;
+
+    [ObservableProperty]
+    private bool _isUpdateBusy;
+
+    [ObservableProperty]
+    private bool _hasUpdateAvailable;
+
+    [ObservableProperty]
+    private bool _updateReadyToRestart;
+
+    [ObservableProperty]
+    private bool _autoCheckUpdates = true;
+
+    [ObservableProperty]
+    private bool _autoUpdateSupported;
 
     public override Task ActivateAsync(CancellationToken cancellationToken = default) =>
         LoadAsync(cancellationToken);
@@ -263,6 +297,15 @@ public sealed partial class SettingsViewModel : PageViewModel
     [RelayCommand]
     private async Task RefreshAuditsAsync() => await LoadAsync().ConfigureAwait(true);
 
+    [RelayCommand]
+    private async Task CheckUpdatesAsync() => await _updateService.CheckAsync().ConfigureAwait(true);
+
+    [RelayCommand]
+    private async Task DownloadUpdatesAsync() => await _updateService.DownloadAsync().ConfigureAwait(true);
+
+    [RelayCommand]
+    private void RestartToUpdate() => _updateService.ApplyAndRestart();
+
     partial void OnSelectedRoleChanged(RoleOption? value)
     {
         if (_suppressRoleChange || value is null)
@@ -332,5 +375,34 @@ public sealed partial class SettingsViewModel : PageViewModel
             Audits.Clear();
             AuditCountText = "当前角色无权查看审计";
         }
+
+        _suppressAutoCheckWrite = true;
+        var autoCheck = await _settings.GetAsync("update.autoCheck", cancellationToken).ConfigureAwait(true);
+        AutoCheckUpdates = autoCheck != "0";
+        _suppressAutoCheckWrite = false;
+
+        RefreshUpdateState();
+    }
+
+    partial void OnAutoCheckUpdatesChanged(bool value)
+    {
+        if (_suppressAutoCheckWrite)
+        {
+            return;
+        }
+
+        _ = _settings.SetAsync("update.autoCheck", value ? "1" : "0");
+    }
+
+    private void RefreshUpdateState()
+    {
+        var snapshot = _updateService.Current;
+        UpdateStatusText = snapshot.StatusText;
+        UpdateProgress = snapshot.ProgressPercent;
+        HasUpdateAvailable = snapshot.State is UpdateState.Available;
+        UpdateReadyToRestart = snapshot.State is UpdateState.ReadyToRestart;
+        IsUpdateBusy = snapshot.State is UpdateState.Checking or UpdateState.Downloading;
+        AutoUpdateSupported = snapshot.IsInstalled;
+        AvailableVersionText = snapshot.AvailableVersion is { } version ? $"v{version}" : "—";
     }
 }

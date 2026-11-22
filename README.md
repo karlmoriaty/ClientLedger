@@ -34,14 +34,19 @@
 
 ## 下载与安装
 
-从 [Releases](https://github.com/karlmoriaty/ClientLedger/releases) 下载 `ClientLedger-<version>-win-x64.exe`。
+从 [Releases](https://github.com/karlmoriaty/ClientLedger/releases) 下载：
+
+| 形态 | 文件 | 自动更新 |
+| --- | --- | --- |
+| 安装版（推荐） | `ClientLedgerApp-win-Setup.exe` | 支持 |
+| 便携版 | `ClientLedgerApp-win-Portable.zip` | 不支持，手动下载新版本 |
 
 - Windows 10 / 11 x64
-- 免安装 .NET 运行时（自包含单文件，约 60 MB）
+- 免安装 .NET 运行时（自包含）
 - 首次启动写入示例数据，可在「设置 → 数据」一键清除
 - 数据位置：`%LocalAppData%\ClientLedger\data\clientledger.db`
 
-当前更新方式是到 Releases 页面手动下载新版本；自动更新（Velopack）在路线图中。
+安装版启动后会静默检查更新，也可以在「设置 → 更新」手动检查、下载并重启安装。更新包走增量下载，只对安装版生效。
 
 ## 关于试用与许可证
 
@@ -107,7 +112,8 @@ public interface IModule
 
 ## 路线图
 
-- 自动更新：接入 Velopack，支持增量更新与更新通道
+<!-- ===== 路线图 ===== -->
+
 - 报价 PDF / 打印
 - CSV 导入导出与备份还原
 - 深色主题

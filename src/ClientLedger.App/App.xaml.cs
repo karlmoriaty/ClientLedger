@@ -7,6 +7,7 @@ using ClientLedger.Foundation.Platform;
 using ClientLedger.Shell.Views;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
+using Velopack;
 
 namespace ClientLedger.App;
 
@@ -15,6 +16,12 @@ public partial class App : Application
     private SingleInstanceGuard? _singleInstance;
     private ServiceProvider? _provider;
     private IAppLog? _log;
+
+    public App()
+    {
+        // Velopack 的安装/更新钩子必须在任何界面初始化之前处理。
+        VelopackApp.Build().Run();
+    }
 
     protected override void OnStartup(StartupEventArgs e)
     {
